@@ -20,7 +20,6 @@
 		50219E2B1AD6A18A000C0FF1 /* ARDVideoCallView.m in Sources */ = {isa = PBXBuildFile; fileRef = 50219E091AD6A18A000C0FF1 /* ARDVideoCallView.m */; };
 		50219E2C1AD6A18A000C0FF1 /* ARDVideoCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50219E0B1AD6A18A000C0FF1 /* ARDVideoCallViewController.m */; };
 		50219E2D1AD6A18A000C0FF1 /* ARDWebSocketChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 50219E0D1AD6A18A000C0FF1 /* ARDWebSocketChannel.m */; };
-		50219E2E1AD6A18A000C0FF1 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 50219E0E1AD6A18A000C0FF1 /* Info.plist */; };
 		50219E2F1AD6A18A000C0FF1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 50219E0F1AD6A18A000C0FF1 /* main.m */; };
 		50219E301AD6A18A000C0FF1 /* Default-568h.png in Resources */ = {isa = PBXBuildFile; fileRef = 50219E111AD6A18A000C0FF1 /* Default-568h.png */; };
 		50219E311AD6A18A000C0FF1 /* ic_call_end_black_24dp.png in Resources */ = {isa = PBXBuildFile; fileRef = 50219E121AD6A18A000C0FF1 /* ic_call_end_black_24dp.png */; };
@@ -33,13 +32,14 @@
 		50219E381AD6A18A000C0FF1 /* RTCMediaConstraints+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 50219E1C1AD6A18A000C0FF1 /* RTCMediaConstraints+JSON.m */; };
 		50219E391AD6A18A000C0FF1 /* RTCSessionDescription+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 50219E1E1AD6A18A000C0FF1 /* RTCSessionDescription+JSON.m */; };
 		50219E3A1AD6A18A000C0FF1 /* UIImage+ARDUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 50219E201AD6A18A000C0FF1 /* UIImage+ARDUtilities.m */; };
-		50219E401AD6A19F000C0FF1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 50219E3D1AD6A19F000C0FF1 /* LICENSE */; };
 		50219E411AD6A19F000C0FF1 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 50219E3F1AD6A19F000C0FF1 /* SRWebSocket.m */; };
 		50219E431AD6A1BF000C0FF1 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50219E421AD6A1BF000C0FF1 /* WebRTC.framework */; };
 		50219E451AD6AD8D000C0FF1 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50219E441AD6AD8D000C0FF1 /* openssl.framework */; };
 		50219E471AD6ADA9000C0FF1 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 50219E461AD6ADA9000C0FF1 /* libstdc++.dylib */; };
 		50219E491AD6ADBC000C0FF1 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50219E481AD6ADBC000C0FF1 /* GLKit.framework */; };
 		50219E4D1AD6AE2A000C0FF1 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 50219E4C1AD6AE2A000C0FF1 /* libicucore.dylib */; };
+		50BBA8A91AFB431B00E03A94 /* ic_switch_video_black_24dp.png in Resources */ = {isa = PBXBuildFile; fileRef = 50BBA8A71AFB431B00E03A94 /* ic_switch_video_black_24dp.png */; };
+		50BBA8AA1AFB431B00E03A94 /* ic_switch_video_black_24dp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 50BBA8A81AFB431B00E03A94 /* ic_switch_video_black_24dp@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -104,6 +104,8 @@
 		50219E4A1AD6AE1E000C0FF1 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.3.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		50219E4C1AD6AE2A000C0FF1 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.3.sdk/usr/lib/libicucore.dylib; sourceTree = DEVELOPER_DIR; };
 		50B7C21A1AD55C2F006CEEC9 /* AppRTCDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppRTCDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		50BBA8A71AFB431B00E03A94 /* ic_switch_video_black_24dp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_switch_video_black_24dp.png; sourceTree = "<group>"; };
+		50BBA8A81AFB431B00E03A94 /* ic_switch_video_black_24dp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_switch_video_black_24dp@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,8 @@
 				50219E131AD6A18A000C0FF1 /* ic_call_end_black_24dp@2x.png */,
 				50219E141AD6A18A000C0FF1 /* ic_clear_black_24dp.png */,
 				50219E151AD6A18A000C0FF1 /* ic_clear_black_24dp@2x.png */,
+				50BBA8A71AFB431B00E03A94 /* ic_switch_video_black_24dp.png */,
+				50BBA8A81AFB431B00E03A94 /* ic_switch_video_black_24dp@2x.png */,
 				50219E161AD6A18A000C0FF1 /* Roboto-Regular.ttf */,
 			);
 			path = resources;
@@ -263,7 +267,7 @@
 		50B7C2101AD5578C006CEEC9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0620;
+				LastUpgradeCheck = 0630;
 				TargetAttributes = {
 					50B7C2191AD55C2F006CEEC9 = {
 						CreatedOnToolsVersion = 6.2;
@@ -295,9 +299,9 @@
 			files = (
 				50219E321AD6A18A000C0FF1 /* ic_call_end_black_24dp@2x.png in Resources */,
 				50219E351AD6A18A000C0FF1 /* Roboto-Regular.ttf in Resources */,
-				50219E401AD6A19F000C0FF1 /* LICENSE in Resources */,
+				50BBA8AA1AFB431B00E03A94 /* ic_switch_video_black_24dp@2x.png in Resources */,
 				50219E301AD6A18A000C0FF1 /* Default-568h.png in Resources */,
-				50219E2E1AD6A18A000C0FF1 /* Info.plist in Resources */,
+				50BBA8A91AFB431B00E03A94 /* ic_switch_video_black_24dp.png in Resources */,
 				50219E331AD6A18A000C0FF1 /* ic_clear_black_24dp.png in Resources */,
 				50219E341AD6A18A000C0FF1 /* ic_clear_black_24dp@2x.png in Resources */,
 				50219E311AD6A18A000C0FF1 /* ic_call_end_black_24dp.png in Resources */,
@@ -340,6 +344,7 @@
 		50B7C2141AD5578C006CEEC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
 		};
@@ -378,8 +383,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
 					"$(inherited)",
+					"DEBUG=1",
+					"WEBRTC_IOS=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -426,6 +432,7 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = "WEBRTC_IOS=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
