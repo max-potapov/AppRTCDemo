@@ -1,33 +1,17 @@
 /*
- * libjingle
- * Copyright 2015 Google Inc.
+ *  Copyright 2015 The WebRTC Project Authors. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  1. Redistributions of source code must retain the above copyright notice,
- *     this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
  */
 
 #import "ARDVideoCallViewController.h"
 
 #import <WebRTC/RTCAVFoundationVideoSource.h>
+#import <WebRTC/RTCLogging.h>
 
 #import "ARDAppClient.h"
 #import "ARDVideoCallView.h"
@@ -47,10 +31,14 @@
 
 @synthesize videoCallView = _videoCallView;
 
-- (instancetype)initForRoom:(NSString *)room {
+- (instancetype)initForRoom:(NSString *)room
+                 isLoopback:(BOOL)isLoopback
+                isAudioOnly:(BOOL)isAudioOnly {
   if (self = [super init]) {
     _client = [[ARDAppClient alloc] initWithDelegate:self];
-    [_client connectToRoomWithId:room options:nil];
+    [_client connectToRoomWithId:room
+                      isLoopback:isLoopback
+                     isAudioOnly:isAudioOnly];
   }
   return self;
 }
@@ -69,13 +57,13 @@
     didChangeState:(ARDAppClientState)state {
   switch (state) {
     case kARDAppClientStateConnected:
-      NSLog(@"Client connected.");
+      RTCLog(@"Client connected.");
       break;
     case kARDAppClientStateConnecting:
-      NSLog(@"Client connecting.");
+      RTCLog(@"Client connecting.");
       break;
     case kARDAppClientStateDisconnected:
-      NSLog(@"Client disconnected.");
+      RTCLog(@"Client disconnected.");
       [self hangup];
       break;
   }
@@ -83,7 +71,7 @@
 
 - (void)appClient:(ARDAppClient *)client
     didChangeConnectionState:(RTCICEConnectionState)state {
-  NSLog(@"ICE state changed: %d", state);
+  RTCLog(@"ICE state changed: %d", state);
   __weak ARDVideoCallViewController *weakSelf = self;
   dispatch_async(dispatch_get_main_queue(), ^{
     ARDVideoCallViewController *strongSelf = weakSelf;
@@ -104,6 +92,12 @@
 }
 
 - (void)appClient:(ARDAppClient *)client
+      didGetStats:(NSArray *)stats {
+  _videoCallView.statsView.stats = stats;
+  [_videoCallView setNeedsLayout];
+}
+
+- (void)appClient:(ARDAppClient *)client
          didError:(NSError *)error {
   NSString *message =
       [NSString stringWithFormat:@"%@", error.localizedDescription];
@@ -121,6 +115,11 @@
   // TODO(tkchin): Rate limit this so you can't tap continously on it.
   // Probably through an animation.
   [self switchCamera];
+}
+
+- (void)videoCallViewDidEnableStats:(ARDVideoCallView *)view {
+  _client.shouldGetStats = YES;
+  _videoCallView.statsView.hidden = NO;
 }
 
 #pragma mark - Private
@@ -151,8 +150,10 @@
   self.remoteVideoTrack = nil;
   self.localVideoTrack = nil;
   [_client disconnect];
-  [self.presentingViewController dismissViewControllerAnimated:YES
-                                                    completion:nil];
+  if (![self isBeingDismissed]) {
+    [self.presentingViewController dismissViewControllerAnimated:YES
+                                                      completion:nil];
+  }
 }
 
 - (void)switchCamera {
@@ -175,6 +176,7 @@
     case RTCICEConnectionFailed:
     case RTCICEConnectionDisconnected:
     case RTCICEConnectionClosed:
+    case RTCICEConnectionMax:
       return nil;
   }
 }

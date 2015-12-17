@@ -1,28 +1,11 @@
 /*
- * libjingle
- * Copyright 2015 Google Inc.
+ *  Copyright 2015 The WebRTC Project Authors. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  1. Redistributions of source code must retain the above copyright notice,
- *     this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
  */
 
 #import "ARDVideoCallView.h"
@@ -34,6 +17,7 @@ static CGFloat const kButtonPadding = 16;
 static CGFloat const kButtonSize = 48;
 static CGFloat const kLocalVideoViewSize = 120;
 static CGFloat const kLocalVideoViewPadding = 8;
+static CGFloat const kStatusBarHeight = 20;
 
 @interface ARDVideoCallView () <RTCEAGLVideoViewDelegate>
 @end
@@ -49,6 +33,7 @@ static CGFloat const kLocalVideoViewPadding = 8;
 @synthesize statusLabel = _statusLabel;
 @synthesize localVideoView = _localVideoView;
 @synthesize remoteVideoView = _remoteVideoView;
+@synthesize statsView = _statsView;
 @synthesize delegate = _delegate;
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -62,6 +47,10 @@ static CGFloat const kLocalVideoViewPadding = 8;
     _localVideoView = [[RTCEAGLVideoView alloc] initWithFrame:CGRectZero];
     _localVideoView.delegate = self;
     [self addSubview:_localVideoView];
+
+    _statsView = [[ARDStatsView alloc] initWithFrame:CGRectZero];
+    _statsView.hidden = YES;
+    [self addSubview:_statsView];
 
     // TODO(tkchin): don't display this if we can't actually do camera switch.
     _cameraSwitchButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -91,6 +80,13 @@ static CGFloat const kLocalVideoViewPadding = 8;
     _statusLabel.font = [UIFont fontWithName:@"Roboto" size:16];
     _statusLabel.textColor = [UIColor whiteColor];
     [self addSubview:_statusLabel];
+
+    UITapGestureRecognizer *tapRecognizer =
+        [[UITapGestureRecognizer alloc]
+            initWithTarget:self
+                    action:@selector(didTripleTap:)];
+    tapRecognizer.numberOfTapsRequired = 3;
+    [self addGestureRecognizer:tapRecognizer];
   }
   return self;
 }
@@ -135,6 +131,12 @@ static CGFloat const kLocalVideoViewPadding = 8;
     _localVideoView.frame = bounds;
   }
 
+  // Place stats at the top.
+  CGSize statsSize = [_statsView sizeThatFits:bounds.size];
+  _statsView.frame = CGRectMake(CGRectGetMinX(bounds),
+                                CGRectGetMinY(bounds) + kStatusBarHeight,
+                                statsSize.width, statsSize.height);
+
   // Place hangup button in the bottom left.
   _hangupButton.frame =
       CGRectMake(CGRectGetMinX(bounds) + kButtonPadding,
@@ -174,6 +176,10 @@ static CGFloat const kLocalVideoViewPadding = 8;
 
 - (void)onHangup:(id)sender {
   [_delegate videoCallViewDidHangup:self];
+}
+
+- (void)didTripleTap:(UITapGestureRecognizer *)recognizer {
+  [_delegate videoCallViewDidEnableStats:self];
 }
 
 @end

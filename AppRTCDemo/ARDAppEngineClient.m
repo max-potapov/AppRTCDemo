@@ -1,31 +1,16 @@
 /*
- * libjingle
- * Copyright 2014 Google Inc.
+ *  Copyright 2014 The WebRTC Project Authors. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  1. Redistributions of source code must retain the above copyright notice,
- *     this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
  */
 
 #import "ARDAppEngineClient.h"
+
+#import <WebRTC/RTCLogging.h>
 
 #import "ARDJoinResponse.h"
 #import "ARDMessageResponse.h"
@@ -37,6 +22,8 @@ static NSString * const kARDRoomServerHostUrl =
     @"https://apprtc.appspot.com";
 static NSString * const kARDRoomServerJoinFormat =
     @"https://apprtc.appspot.com/join/%@";
+static NSString * const kARDRoomServerJoinFormatLoopback =
+    @"https://apprtc.appspot.com/join/%@?debug=loopback";
 static NSString * const kARDRoomServerMessageFormat =
     @"https://apprtc.appspot.com/message/%@/%@";
 static NSString * const kARDRoomServerLeaveFormat =
@@ -50,14 +37,22 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
 #pragma mark - ARDRoomServerClient
 
 - (void)joinRoomWithRoomId:(NSString *)roomId
+                isLoopback:(BOOL)isLoopback
          completionHandler:(void (^)(ARDJoinResponse *response,
                                      NSError *error))completionHandler {
   NSParameterAssert(roomId.length);
 
-  NSString *urlString =
-      [NSString stringWithFormat:kARDRoomServerJoinFormat, roomId];
+  NSString *urlString = nil;
+  if (isLoopback) {
+    urlString =
+        [NSString stringWithFormat:kARDRoomServerJoinFormatLoopback, roomId];
+  } else {
+    urlString =
+        [NSString stringWithFormat:kARDRoomServerJoinFormat, roomId];
+  }
+
   NSURL *roomURL = [NSURL URLWithString:urlString];
-  NSLog(@"Joining room:%@ on room server.", roomId);
+  RTCLog(@"Joining room:%@ on room server.", roomId);
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:roomURL];
   request.HTTPMethod = @"POST";
   __weak ARDAppEngineClient *weakSelf = self;
@@ -101,7 +96,7 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
       [NSString stringWithFormat:
           kARDRoomServerMessageFormat, roomId, clientId];
   NSURL *url = [NSURL URLWithString:urlString];
-  NSLog(@"C->RS POST: %@", message);
+  RTCLog(@"C->RS POST: %@", message);
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
   request.HTTPMethod = @"POST";
   request.HTTPBody = data;
@@ -147,19 +142,19 @@ static NSInteger const kARDAppEngineClientErrorBadResponse = -1;
   NSError *error = nil;
   // We want a synchronous request so that we know that we've left the room on
   // room server before we do any further work.
-  NSLog(@"C->RS: BYE");
+  RTCLog(@"C->RS: BYE");
   [NSURLConnection sendSynchronousRequest:request
                         returningResponse:&response
                                     error:&error];
   if (error) {
-    NSLog(@"Error leaving room %@ on room server: %@",
+    RTCLogError(@"Error leaving room %@ on room server: %@",
           roomId, error.localizedDescription);
     if (completionHandler) {
       completionHandler(error);
     }
     return;
   }
-  NSLog(@"Left room:%@ on room server.", roomId);
+  RTCLog(@"Left room:%@ on room server.", roomId);
   if (completionHandler) {
     completionHandler(nil);
   }

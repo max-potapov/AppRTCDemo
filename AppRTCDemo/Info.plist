@@ -11,17 +11,11 @@
 	<key>CFBundleExecutable</key>
 	<string>AppRTCDemo</string>
 	<key>CFBundleIcons</key>
-	<dict>
-		<key>CFBundlePrimaryIcon</key>
-		<dict>
-			<key>CFBundleIconFiles</key>
-			<array>
-				<string>Icon.png</string>
-			</array>
-		</dict>
-	</dict>
+	<dict/>
+	<key>CFBundleIcons~ipad</key>
+	<dict/>
 	<key>CFBundleIdentifier</key>
-	<string>com.google.AppRTCDemo</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -38,9 +32,13 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
-	<key>UIRequiredDeviceCapabilities</key>
+	<key>UIAppFonts</key>
 	<array>
-		<string>armv7</string>
+		<string>Roboto-Regular.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>voip</string>
 	</array>
 	<key>UIStatusBarTintParameters</key>
 	<dict>
@@ -55,14 +53,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-	</array>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Roboto-Regular.ttf</string>
-	</array>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>voip</string>
 	</array>
 </dict>
 </plist>

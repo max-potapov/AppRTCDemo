@@ -1,28 +1,11 @@
 /*
- * libjingle
- * Copyright 2014 Google Inc.
+ *  Copyright 2014 The WebRTC Project Authors. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  1. Redistributions of source code must retain the above copyright notice,
- *     this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
  */
 
 #import <Foundation/Foundation.h>
@@ -31,8 +14,10 @@
 #import "ARDAppClient+Internal.h"
 #import "ARDJoinResponse+Internal.h"
 #import "ARDMessageResponse+Internal.h"
+#import "ARDSDPUtils.h"
 #import "RTCMediaConstraints.h"
 #import "RTCPeerConnectionFactory.h"
+#import "RTCSessionDescription.h"
 
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/ssladapter.h"
@@ -153,7 +138,7 @@
                                                   NSError *error);
     [invocation getArgument:&completionHandler atIndex:3];
     completionHandler(joinResponse, nil);
-  }] joinRoomWithRoomId:roomId completionHandler:[OCMArg any]];
+  }] joinRoomWithRoomId:roomId isLoopback:NO completionHandler:[OCMArg any]];
 
   // Return message response from above on join.
   [[[mockRoomServerClient stub] andDo:^(NSInvocation *invocation) {
@@ -293,13 +278,34 @@
   weakAnswerer = answerer;
 
   // Kick off connection.
-  [caller connectToRoomWithId:roomId options:nil];
-  [answerer connectToRoomWithId:roomId options:nil];
+  [caller connectToRoomWithId:roomId isLoopback:NO isAudioOnly:NO];
+  [answerer connectToRoomWithId:roomId isLoopback:NO isAudioOnly:NO];
   [self waitForExpectationsWithTimeout:20 handler:^(NSError *error) {
     if (error) {
       NSLog(@"Expectations error: %@", error);
     }
   }];
+}
+
+@end
+
+@interface ARDSDPUtilsTest : ARDTestCase
+- (void)testPreferVideoCodec;
+@end
+
+@implementation ARDSDPUtilsTest
+
+- (void)testPreferVideoCodec {
+  NSString *sdp = @("m=video 9 RTP/SAVPF 100 116 117 96 120\n"
+                    "a=rtpmap:120 H264/90000\n");
+  NSString *expectedSdp = @("m=video 9 RTP/SAVPF 120 100 116 117 96\n"
+                            "a=rtpmap:120 H264/90000\n");
+  RTCSessionDescription* desc =
+      [[RTCSessionDescription alloc] initWithType:@"offer" sdp:sdp];
+  RTCSessionDescription *h264Desc =
+      [ARDSDPUtils descriptionForDescription:desc
+                         preferredVideoCodec:@"H264"];
+  EXPECT_TRUE([h264Desc.description isEqualToString:expectedSdp]);
 }
 
 @end
@@ -320,3 +326,12 @@ TEST_F(SignalingTest, SessionTest) {
     [test testSession];
   }
 }
+
+TEST_F(SignalingTest, SDPTest) {
+  @autoreleasepool {
+    ARDSDPUtilsTest *test = [[ARDSDPUtilsTest alloc] init];
+    [test testPreferVideoCodec];
+  }
+}
+
+
